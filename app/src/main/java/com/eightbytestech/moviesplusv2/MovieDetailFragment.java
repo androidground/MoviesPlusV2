@@ -100,7 +100,6 @@ public class MovieDetailFragment extends Fragment {
      */
     RecyclerView trailerRecyclerView;
     TrailerAdapter trailerAdapter;
-    private int grid_columns;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -114,8 +113,6 @@ public class MovieDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-
-        grid_columns = (int) getResources().getInteger(R.integer.gallery_columns);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
@@ -231,27 +228,30 @@ public class MovieDetailFragment extends Fragment {
         trailerRecyclerView = (RecyclerView) rootView.findViewById(R.id.trailerRecyclerView);
         trailerRecyclerView.setHasFixedSize(true);
 
-        title.setText(mMovie.title);
+        if ( title != null )
+            title.setText(mMovie.title);
         description.setText(mMovie.overview);
         voteAverage.setText(getResources().getString(R.string.average_vote) + (Float.toString(mMovie.voteAverage)) + "/10.0");
         releaseDate.setText(getResources().getString(R.string.releaste_date) + mMovie.releaseDate);
 
         String strPosterPath = ApiUtility.MovieDbUtility.getCompletePhotoUrl(mMovie.posterPath);
 
-        if (isFavorite) {
-            try {
-                String filename = String.valueOf(mMovie.id);
-                File photofile = new File(getContext().getFilesDir(), filename);
-                Bitmap freshBitMap = BitmapFactory.decodeStream(new FileInputStream(photofile));
-                poster.setImageBitmap(freshBitMap);
-            } catch (FileNotFoundException e) {
-                poster.setImageResource(R.drawable.poster_placeholder);
-                e.printStackTrace();
+        if ( poster != null ) {
+            if (isFavorite) {
+                try {
+                    String filename = String.valueOf(mMovie.id);
+                    File photofile = new File(getContext().getFilesDir(), filename);
+                    Bitmap freshBitMap = BitmapFactory.decodeStream(new FileInputStream(photofile));
+                    poster.setImageBitmap(freshBitMap);
+                } catch (FileNotFoundException e) {
+                    poster.setImageResource(R.drawable.poster_placeholder);
+                    e.printStackTrace();
+                }
+            } else {
+                Picasso.with(getContext())
+                        .load(strPosterPath)
+                        .into(poster);
             }
-        } else {
-            Picasso.with(getContext())
-                    .load(strPosterPath)
-                    .into(poster);
         }
 
         favoriteButton = (ImageButton) rootView.findViewById(R.id.favoriteButton);

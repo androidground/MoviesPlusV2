@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 
 import com.eightbytestech.moviesplusv2.adapter.MovieAdapter;
@@ -39,8 +40,8 @@ public class MovieListActivity extends AppCompatActivity {
     @BindView(R.id.movie_list)
     RecyclerView mRecyclerView;
 
-    //@BindView(R.id.errorTextView)
-    //TextView mErrorMessage;
+    @BindView(R.id.errorTextView)
+    TextView mErrorMessage;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -126,7 +127,7 @@ public class MovieListActivity extends AppCompatActivity {
     private void setupMovieList() {
         //setupRecyclerView(mRecyclerView);
 
-        grid_columns = (int) getResources().getInteger(R.integer.gallery_columns);
+        grid_columns = getResources().getInteger(R.integer.gallery_columns);
 
         tmdb_end_point = getResources().getString(R.string.moviedb_endpoint);
 
@@ -249,14 +250,12 @@ public class MovieListActivity extends AppCompatActivity {
 
             updateMovieAdapter(mMovieList);
 
-        } else {
-            // TODO: in event that user has no favorites, maybe prompt them
         }
     }
 
 
     private void updateMovieAdapter(List<Movie> movies) {
-        //mErrorMessage.setVisibility(View.INVISIBLE);
+        mErrorMessage.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
 
         populateRecyclerView();
@@ -265,9 +264,8 @@ public class MovieListActivity extends AppCompatActivity {
     }
 
     private void showErrorMessage() {
-        //mErrorMessage.setVisibility(View.VISIBLE);
+        mErrorMessage.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.INVISIBLE);
-        //setContentView(R.layout.activity_movie_list);
     }
 
     /*private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
