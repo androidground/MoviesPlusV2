@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">MoviesPlusV2</string>
+    <string name="title_movie_detail">Movie Detail</string>
+
+    <string name="action_popular_movies">Most Popular</string>
+    <string name="sort_popular_movies">popularity.desc</string>
+
+    <string name="action_toprated_movies">Top Rated</string>
+    <string name="sort_top_rated">vote_average.desc</string>
+
+    <string name="action_favorites_movies">Favorites</string>
+
+    <string name="action_share_trailer">Share Trailer</string>
+
+    <string name="moviedb_endpoint">https://api.themoviedb.org/3/</string>
+    <string name="moviedb_language">en-US</string>
+
+    <!-- PLEASE PROVIDE THE API KEY GENERATED ON THEMOVIEDB.ORG -->
+    <string name="moviedb_api_key">8c58ac5affaae34a25411e6809f2e1ae</string>
+
+    <string name="moviedb_poster_endpoint">http://image.tmdb.org/t/p/</string>
+    <string name="moviedb_poster_size">w185</string>
+
+    <string name="average_vote">User Rating:\u0020</string>
+    <string name="releaste_date">Release Date:\u0020</string>
+    <string name="space_char">\u0020</string>
+
+    <string name="error_message">An error has occurred. Please try again after some time!</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
+</resources>

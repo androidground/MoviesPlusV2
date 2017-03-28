@@ -1,0 +1,120 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:padding="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/colorAccent" />
+        <ImageView
+            android:id="@+id/movie_poster"
+            android:layout_width="138.755dp"
+            android:layout_height="201dp"
+            android:layout_below="@+id/movie_title"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:padding="8dp"
+            tools:src="@drawable/poster_placeholder"/>
+        <TextView
+            android:id="@+id/release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_alignTop="@id/movie_poster"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@id/movie_poster"/>
+        <TextView
+            android:id="@+id/vote_average"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_alignLeft="@id/release_date"
+            android:layout_below="@id/release_date"
+            android:layout_marginBottom="8dp"
+            android:isIndicator="true"/>
+        <ImageButton
+            android:id="@+id/favoriteButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignLeft="@id/release_date"
+            android:layout_below="@id/vote_average"
+            android:layout_margin="@dimen/fab_margin"
+            android:padding="16dp"
+            android:src="@drawable/ic_favorite_border_24px"
+            android:background="@drawable/roundcorners"/>
+        <TextView
+            android:id="@+id/movie_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/movie_poster"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:padding="8dp"
+            android:paddingBottom="24dp"/>
+
+        <TextView
+            android:id="@+id/movie_trailers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/movie_description"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:padding="8dp"
+            android:paddingBottom="24dp"
+            android:paddingTop="24dp"
+            android:text="@string/trailers"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textColor="@color/textPrimaryColor" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/trailerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/movie_trailers"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp" />
+
+        <TextView
+            android:id="@+id/movie_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/trailerRecyclerView"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:padding="8dp"
+            android:paddingBottom="24dp"
+            android:paddingTop="24dp"
+            android:text="@string/reviews"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textColor="@color/textPrimaryColor" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/reviewRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/movie_reviews"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp" />
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>
