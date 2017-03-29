@@ -51,27 +51,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A fragment representing a single Movie detail screen.
- * This fragment is either contained in a {@link MovieListActivity}
- * in two-pane mode (on tablets) or a {@link MovieDetailActivity}
- * on handsets.
- */
 public class MovieDetailFragment extends Fragment {
 
     private final static String TAG = "#MoviesPlusV2: ";
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
 
     public static final String MOVIE_DETAILS = "movie_details";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.DummyItem mItem;
 
     FloatingActionButton fab;
     ImageButton favoriteButton;
@@ -114,19 +99,6 @@ public class MovieDetailFragment extends Fragment {
 
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-
-            Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
-            }
-        }
-
         if ( getArguments().containsKey(MOVIE_DETAILS)) {
             mMovie = getArguments().getParcelable(MOVIE_DETAILS);
             Activity activity = this.getActivity();
@@ -157,7 +129,7 @@ public class MovieDetailFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ReviewInfo> call, Throwable t) {
-                //showErrorMessage();
+                showErrorMessage();
                 t.printStackTrace();
             }
         });
@@ -182,6 +154,7 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void showErrorMessage() {
+        //TODO - Still have to decide the Error Message Screen
     }
 
     private void updateReviewAdapter(List<Review> reviewList) {
@@ -213,8 +186,6 @@ public class MovieDetailFragment extends Fragment {
         }
 
         View rootView = inflater.inflate(R.layout.movie_detail, container, false);
-
-        //((TextView) rootView.findViewById(R.id.movie_title)).setText(mMovie.title);
 
         title = (TextView) rootView.findViewById(R.id.movie_title);
         description = (TextView) rootView.findViewById(R.id.movie_description);
@@ -286,11 +257,6 @@ public class MovieDetailFragment extends Fragment {
 
         fetchMovieReviewsTrailers();
 
-        // Show the dummy content as text in a TextView.
-        //if (mItem != null) {
-        //((TextView) rootView.findViewById(R.id.movie_detail)).setText(mMovie.overview);
-        //}
-
         return rootView;
     }
 
@@ -315,11 +281,16 @@ public class MovieDetailFragment extends Fragment {
 
         //toggle db
         if (isFavorite) {
-            Bitmap bitmap = ((BitmapDrawable) poster.getDrawable()).getBitmap();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-            addMovie(byteArray);
+            if ( poster != null ) {
+                Bitmap bitmap = ((BitmapDrawable) poster.getDrawable()).getBitmap();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                addMovie(byteArray);
+            } else {
+                addMovie(null);
+            }
+
         } else {
             removeMovie();
         }
@@ -359,15 +330,17 @@ public class MovieDetailFragment extends Fragment {
         Uri insertedMovieUri = getContext().getContentResolver().
                 insert(FavoritesContract.Favorites.CONTENT_URI, values);
 
+        if ( byteArray != null ) {
         /* Write the file to disk */
-        String filename = String.valueOf(mMovie.id);
-        FileOutputStream outputStream;
-        try {
-            outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(byteArray);
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            String filename = String.valueOf(mMovie.id);
+            FileOutputStream outputStream;
+            try {
+                outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+                outputStream.write(byteArray);
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

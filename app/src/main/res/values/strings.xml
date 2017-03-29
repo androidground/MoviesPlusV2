@@ -26,6 +26,7 @@
     <string name="space_char">\u0020</string>
 
     <string name="error_message">An error has occurred. Please try again after some time!</string>
+    <string name="missing_favorites">Seems like there are no Favorites of yours!</string>
     <string name="reviews">Reviews</string>
     <string name="trailers">Trailers</string>
 </resources>

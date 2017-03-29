@@ -27,7 +27,6 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MovieListActivity extends AppCompatActivity {
 
@@ -35,7 +34,7 @@ public class MovieListActivity extends AppCompatActivity {
 
     private final static String TAG = "#MoviesPlusV2: ";
 
-    private static String tmdb_end_point;
+    private String tmdb_end_point;
 
     @BindView(R.id.movie_list)
     RecyclerView mRecyclerView;
@@ -47,6 +46,8 @@ public class MovieListActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     private MovieAdapter movieAdapter;
+
+    private String strMissingFavorites;
 
     private String apiKey;
     private String language;
@@ -60,8 +61,6 @@ public class MovieListActivity extends AppCompatActivity {
     private List<Movie> mMovieList;
 
     private MovieDBEndpointInterface movieDBEndpointInterface;
-
-    private Retrofit retrofit;
 
 
     @Override
@@ -88,22 +87,13 @@ public class MovieListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_popular_movies) {
-            return true;
-        }*/
 
         switch (id) {
             case R.id.popular_movies: {
@@ -125,8 +115,6 @@ public class MovieListActivity extends AppCompatActivity {
 
 
     private void setupMovieList() {
-        //setupRecyclerView(mRecyclerView);
-
         grid_columns = getResources().getInteger(R.integer.gallery_columns);
 
         tmdb_end_point = getResources().getString(R.string.moviedb_endpoint);
@@ -139,7 +127,7 @@ public class MovieListActivity extends AppCompatActivity {
 
         posterEndPointSize = getResources().getString(R.string.moviedb_poster_size);
 
-        populateRecyclerView();
+        strMissingFavorites = getResources().getString(R.string.missing_favorites);
 
         ApiUtility.setMovieDbApiValues(tmdb_end_point, apiKey, language, posterEndPoint, posterEndPointSize);
 
@@ -213,8 +201,6 @@ public class MovieListActivity extends AppCompatActivity {
                 null,
                 null);
 
-        /*use the results from the cursor to make a movie list and update ui */
-        // TODO: ultimately will switch to Realm and this won't be a thing
         mMovieList = new ArrayList<>();
         if (cursor != null && cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
@@ -238,29 +224,29 @@ public class MovieListActivity extends AppCompatActivity {
                 float popularity = cursor.getFloat(popularityColumnIndex);
                 int vote_count = cursor.getInt(voteCountColumnIndex);
 
-
-
-                /*the poster will be set by the adapter, so pass null*/
-                //mMovieList.add(new Movie(null, overview, release_date, id, title, vote_average));
-
-                //Movie(int id, String overview, String releaseDate, String posterPath, String backdropPath, long popularity, String title, long voteAverage, int voteCount)
                 mMovieList.add(new Movie(id, overview, release_date, poster_path, backdrop_path, popularity, title, vote_average, vote_count));
             }
             cursor.close();
 
             updateMovieAdapter(mMovieList);
 
+        } else {
+            showMissingFavoritesMessage();
         }
     }
 
-
     private void updateMovieAdapter(List<Movie> movies) {
-        mErrorMessage.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.VISIBLE);
 
-        populateRecyclerView();
+        if ( movies != null && movies.size() > 0 ) {
+            mErrorMessage.setVisibility(View.INVISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
 
-        movieAdapter.setMovieList(movies);
+            populateRecyclerView();
+
+            movieAdapter.setMovieList(movies);
+        } else {
+            showErrorMessage();
+        }
     }
 
     private void showErrorMessage() {
@@ -268,79 +254,9 @@ public class MovieListActivity extends AppCompatActivity {
         mRecyclerView.setVisibility(View.INVISIBLE);
     }
 
-    /*private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+    private void showMissingFavoritesMessage() {
+        mErrorMessage.setText(strMissingFavorites);
+        mErrorMessage.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
     }
-
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final List<DummyContent.DummyItem> mValues;
-
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
-            mValues = items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.movie_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            //holder.mIdView.setText(mValues.get(position).id);
-            //holder.mContentView.setText(mValues.get(position).content);
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        MovieDetailFragment fragment = new MovieDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.movie_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, MovieDetailActivity.class);
-                        //intent.putExtra(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        intent.putExtra(MovieDetailFragment.ARG_ITEM_ID, Integer.toString(holder.getAdapterPosition() + 1) );
-
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            *//*public final TextView mIdView;
-            public final TextView mContentView;*//*
-            public final ImageView mPosterView;
-            public DummyContent.DummyItem mItem;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-               *//* mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);*//*
-               mPosterView = (ImageView) view.findViewById(R.id.imageView);
-            }
-
-            *//*@Override
-            public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
-            }*//*
-        }
-    }*/
 }
